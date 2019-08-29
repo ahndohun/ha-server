@@ -1,39 +1,15 @@
-var mysql = require("mysql");
-
-var connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "koreanJson"
-});
-
-connection.connect();
-
 var express = require("express");
 var app = express();
+var controller = require("./controller");
 
 app.set("port", process.env.PORT || 3000);
 
+//라우팅
 app.get("/", function(req, res) {
   res.send("hello node");
 });
-
-app.get("/users", function(req, res) {
-  connection.query("SELECT * from users", function(err, rows) {
-    if (err) throw err;
-    res.send(rows);
-  });
-});
-
-app.get("/users/:id", function(req, res) {
-  connection.query(`SELECT * from users WHERE id = ${req.params.id}`, function(
-    err,
-    rows
-  ) {
-    if (err) throw err;
-    res.send(rows);
-  });
-});
+app.get("/users", controller.users.allUsers);
+app.get("/users/:id", controller.users.specificUser);
 
 app.listen(app.get("port"), function() {
   console.log("Express server listening on port " + app.get("port"));
